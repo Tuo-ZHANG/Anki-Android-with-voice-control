@@ -1,5 +1,8 @@
 # Anki Android with voice control
 I try to make only minimal changes to the original Anki Android while implementing the functionalities I want. Click the microphone icon the enable the voice control.
+
+![alt text](https://github.com/Tuo-ZHANG/Anki-Android-with-voice-control/blob/master/showcase.png)
+
 ## Build
 Please use Android studio bumblebee.
 
