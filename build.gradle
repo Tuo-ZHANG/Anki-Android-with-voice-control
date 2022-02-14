@@ -1,0 +1,76 @@
+import org.gradle.internal.jvm.Jvm
+
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    // The version for the Kotlin plugin and dependencies
+    ext.kotlin_version = '1.6.10'
+    ext.lint_version = '30.1.1'
+    ext.acra_version = '5.7.0'
+
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+        maven {
+            url 'https://alphacephei.com/maven/'
+        }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.1.1'
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+        classpath "app.brant:amazonappstorepublisher:0.1.0"
+
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jlleitschuh.gradle:ktlint-gradle:10.2.1"
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+allprojects {
+    apply plugin: "org.jlleitschuh.gradle.ktlint"
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+        maven {
+            url 'https://alphacephei.com/maven/'
+        }
+    }
+}
+
+ext {
+
+    jvmVersion = Jvm.current().javaVersion.majorVersion
+    if (jvmVersion != "11" && jvmVersion != "14" && jvmVersion != "16") {
+        println "\n\n\n"
+        println "**************************************************************************************************************"
+        println "\n\n\n"
+        println "ERROR: AnkiDroid builds with JVM version 11, 14, or 16."
+        println "  Incompatible major version detected: '" + jvmVersion + "'"
+        println "\n\n\n"
+        println "**************************************************************************************************************"
+        println "\n\n\n"
+        System.exit(1)
+    }
+    ciBuild = System.getenv("CI") == "true" // works for Travis CI or Github Actions
+    // allows for -Dpre-dex=false to be set
+    preDexEnabled = "true" == System.getProperty("pre-dex", "true")
+    // allows for universal APKs to be generated
+    universalApkEnabled = "true" == System.getProperty("universal-apk", "false")
+
+    // Virtualized Environment like CI may report host CPU counts vs guest, but runs 2 cores
+    // everyone else gets 50% of cores to account for SMT which doesn't help this workload
+    gradleTestMaxParallelForks = 1
+    if (!ciBuild) {
+        gradleTestMaxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+    }
+}
+

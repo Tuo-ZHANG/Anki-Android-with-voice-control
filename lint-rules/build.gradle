@@ -1,0 +1,29 @@
+apply plugin: "java-library"
+apply plugin: 'kotlin'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+ktlint {
+    disabledRules = ["no-wildcard-imports"]
+}
+
+repositories {
+    google()
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly "com.android.tools.lint:lint-api:$lint_version"
+    compileOnly "com.android.tools.lint:lint:$lint_version"
+
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    testImplementation "junit:junit:4.13.2"
+    testImplementation "com.android.tools.lint:lint:$lint_version"
+    testImplementation "com.android.tools.lint:lint-api:$lint_version"
+    testImplementation "com.android.tools.lint:lint-tests:$lint_version"
+    testImplementation 'org.hamcrest:hamcrest-all:1.3'
+}
