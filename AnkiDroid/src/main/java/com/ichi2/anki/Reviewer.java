@@ -46,7 +46,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.CheckResult;
 import androidx.annotation.DrawableRes;
@@ -185,9 +184,9 @@ public class Reviewer extends AbstractFlashcardViewer implements
         });
     }
 
-    private Model model;
-    private SpeechService speechService;
-    private SpeechStreamService speechStreamService;
+    private Model mModel;
+    private SpeechService mSpeechService;
+    private SpeechStreamService mSpeechStreamService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -418,7 +417,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
                 ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.RECORD_AUDIO},
                         PERMISSIONS_REQUEST_RECORD_AUDIO);
             } else {
-                if (model == null) {
+                if (mModel == null) {
                     initModel();
                 } else {
                     Timber.d("enter else");
@@ -1580,17 +1579,17 @@ public class Reviewer extends AbstractFlashcardViewer implements
                 answerCard(Consts.BUTTON_FOUR);
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
     }
 
 
     @Override
     public void onFinalResult(String hypothesis) {
-        if (speechStreamService != null) {
-            speechStreamService = null;
+        if (mSpeechStreamService != null) {
+            mSpeechStreamService = null;
         }
-        Toast.makeText(this, "voice control turned off", Toast.LENGTH_SHORT).show();
+        UIUtils.showThemedToast(this, "voice control turned off", true);
     }
 
 
@@ -1608,7 +1607,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
     private void initModel() {
         StorageService.unpack(this, "model-en-us", "model",
                 (model) -> {
-                    this.model = model;
+                    this.mModel = model;
                     Timber.d("model generated");
                     recognizeMicrophone();
                 },
@@ -1616,15 +1615,15 @@ public class Reviewer extends AbstractFlashcardViewer implements
     }
 
     private void recognizeMicrophone() {
-        if (speechService != null) {
-            speechService.stop();
-            speechService = null;
+        if (mSpeechService != null) {
+            mSpeechService.stop();
+            mSpeechService = null;
         } else {
             try {
-                Recognizer rec = new Recognizer(model, 16000.0f);
-                speechService = new SpeechService(rec, 16000.0f);
-                speechService.startListening(this);
-                Toast.makeText(this, "voice control on", Toast.LENGTH_SHORT).show();
+                Recognizer rec = new Recognizer(mModel, 16000.0f);
+                mSpeechService = new SpeechService(rec, 16000.0f);
+                mSpeechService.startListening(this);
+                UIUtils.showThemedToast(this, "voice control turned on", true);
             } catch (IOException e) {
                 Timber.e(e);
             }
@@ -1635,13 +1634,13 @@ public class Reviewer extends AbstractFlashcardViewer implements
     public void onDestroy() {
         super.onDestroy();
 
-        if (speechService != null) {
-            speechService.stop();
-            speechService.shutdown();
+        if (mSpeechService != null) {
+            mSpeechService.stop();
+            mSpeechService.shutdown();
         }
 
-        if (speechStreamService != null) {
-            speechStreamService.stop();
+        if (mSpeechStreamService != null) {
+            mSpeechStreamService.stop();
         }
     }
     /**
