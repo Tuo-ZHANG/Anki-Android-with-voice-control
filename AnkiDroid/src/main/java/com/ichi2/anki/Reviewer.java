@@ -1572,11 +1572,24 @@ public class Reviewer extends AbstractFlashcardViewer implements
             } else if (result.equals("again")){
                 answerCard(Consts.BUTTON_ONE);
             } else if (result.equals(("hard"))){
-                answerCard(Consts.BUTTON_TWO);
+                int buttonNumber = getCol().getSched().answerButtons(mCurrentCard);
+                if (buttonNumber == 4) {
+                    answerCard(Consts.BUTTON_TWO);
+                }
             } else if (result.equals("good")){
-                answerCard(Consts.BUTTON_THREE);
+                int buttonNumber = getCol().getSched().answerButtons(mCurrentCard);
+                if (buttonNumber == 2 || buttonNumber == 3){
+                    answerCard(Consts.BUTTON_TWO);
+                } else if (buttonNumber == 4){
+                    answerCard(Consts.BUTTON_THREE);
+                }
             } else if (result.equals("easy")){
-                answerCard(Consts.BUTTON_FOUR);
+                int buttonNumber = getCol().getSched().answerButtons(mCurrentCard);
+                if (buttonNumber == 3) {
+                    answerCard(Consts.BUTTON_THREE);
+                } else if (buttonNumber == 4) {
+                    answerCard(Consts.BUTTON_FOUR);
+                }
             }
         } catch (JSONException e) {
             Timber.e(e);
