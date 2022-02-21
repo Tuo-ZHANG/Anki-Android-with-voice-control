@@ -1563,6 +1563,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
         try {
             JSONObject object = new JSONObject(hypothesis);
             String result = (String) object.get("text");
+            Timber.d(result);
             if (result.equals("replay")) {
                 Timber.d("correctly recognize replay");
                 playSounds(true);
@@ -1589,6 +1590,12 @@ public class Reviewer extends AbstractFlashcardViewer implements
                     answerCard(Consts.BUTTON_THREE);
                 } else if (buttonNumber == 4) {
                     answerCard(Consts.BUTTON_FOUR);
+                }
+            } else if (result.equals("and do")){
+                if (mShowWhiteboard && mWhiteboard != null && !mWhiteboard.undoEmpty()) {
+                    mWhiteboard.undo();
+                } else {
+                    undo();
                 }
             }
         } catch (JSONException e) {
