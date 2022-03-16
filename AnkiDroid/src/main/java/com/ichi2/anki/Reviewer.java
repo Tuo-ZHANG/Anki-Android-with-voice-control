@@ -46,6 +46,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.CheckResult;
 import androidx.annotation.DrawableRes;
@@ -151,7 +152,9 @@ public class Reviewer extends AbstractFlashcardViewer implements
     protected Whiteboard mWhiteboard;
 
     // Record Audio
-    /** File of the temporary mic record **/
+    /**
+     * File of the temporary mic record
+     **/
     protected AudioView mMicToolBar;
     protected String mTempAudioPath;
 
@@ -159,7 +162,9 @@ public class Reviewer extends AbstractFlashcardViewer implements
     private int mEta;
     private boolean mPrefShowETA;
 
-    /** Handle Mark/Flag state of cards */
+    /**
+     * Handle Mark/Flag state of cards
+     */
     private CardMarker mCardMarker;
 
     // Preferences from the collection
@@ -170,8 +175,9 @@ public class Reviewer extends AbstractFlashcardViewer implements
 
     @VisibleForTesting
     protected final PeripheralKeymap mProcessor = new PeripheralKeymap(this, this);
-    
+
     private final Onboarding.Reviewer mOnboarding = new Onboarding.Reviewer(this);
+
 
     protected <T extends Computation<? extends NextCard<? extends Card[]>>> TaskListenerBuilder<Unit, T>
     scheduleCollectionTaskHandler(@PluralsRes int toastResourceId) {
@@ -184,9 +190,11 @@ public class Reviewer extends AbstractFlashcardViewer implements
         });
     }
 
+
     private Model mModel;
     private SpeechService mSpeechService;
     private SpeechStreamService mSpeechStreamService;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,11 +228,13 @@ public class Reviewer extends AbstractFlashcardViewer implements
         super.onPause();
     }
 
+
     @Override
     protected void onResume() {
         mAnswerTimer.resume();
         super.onResume();
     }
+
 
     protected int getFlagToDisplay() {
         int actualValue = mCurrentCard.userFlag();
@@ -248,11 +258,13 @@ public class Reviewer extends AbstractFlashcardViewer implements
         return ret;
     }
 
+
     @Override
     protected void recreateWebView() {
         super.recreateWebView();
         ViewGroupUtils.setRenderWorkaround(this);
     }
+
 
     @Override
     protected boolean shouldDisplayMark() {
@@ -265,6 +277,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
         //Otherwise, if it's in the action bar, don't show it again.
         return isShownInActionBar == null || !isShownInActionBar;
     }
+
 
     protected void onMark(Card card) {
         if (card == null) {
@@ -336,6 +349,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
         getCol().getSched().deferReset();
     }
 
+
     @Override
     protected void setTitle() {
         String title;
@@ -350,6 +364,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
         getSupportActionBar().setSubtitle("");
     }
 
+
     @Override
     protected int getContentViewAttr(FullScreenMode fullscreenMode) {
         switch (fullscreenMode) {
@@ -362,10 +377,12 @@ public class Reviewer extends AbstractFlashcardViewer implements
         }
     }
 
+
     @Override
     protected boolean fitsSystemWindows() {
         return !getFullscreenMode().isFullScreenReview();
     }
+
 
     @Override
     protected void onCollectionLoaded(Collection col) {
@@ -410,7 +427,8 @@ public class Reviewer extends AbstractFlashcardViewer implements
         if (itemId == android.R.id.home) {
             Timber.i("Reviewer:: Home button pressed");
             closeReviewer(RESULT_OK, true);
-        } if (itemId == R.id.voice_control) {
+        }
+        if (itemId == R.id.voice_control) {
             Timber.i("Reviewer:: voice control button pressed");
             int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO);
             if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
@@ -424,7 +442,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
                     recognizeMicrophone();
                 }
             }
-        }else if (itemId == R.id.action_undo) {
+        } else if (itemId == R.id.action_undo) {
             Timber.i("Reviewer:: Undo button pressed");
             if (mShowWhiteboard && mWhiteboard != null && !mWhiteboard.undoEmpty()) {
                 mWhiteboard.undo();
@@ -543,7 +561,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
 
     @Override
     protected void toggleWhiteboard() {
-        mPrefWhiteboard = ! mPrefWhiteboard;
+        mPrefWhiteboard = !mPrefWhiteboard;
         Timber.i("Reviewer:: Whiteboard enabled state set to %b", mPrefWhiteboard);
         //Even though the visibility is now stored in its own setting, we want it to be dependent
         //on the enabled status
@@ -625,7 +643,6 @@ public class Reviewer extends AbstractFlashcardViewer implements
 
 
     /**
-     *
      * @return Whether the mic toolbar is usable
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
@@ -663,7 +680,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
                 return;
             }
             mMicToolBar = AudioView.createRecorderInstance(this, R.drawable.ic_play_arrow_white_24dp, R.drawable.ic_pause_white_24dp,
-                        R.drawable.ic_stop_white_24dp, R.drawable.ic_rec, R.drawable.ic_rec_stop, mTempAudioPath);
+                    R.drawable.ic_stop_white_24dp, R.drawable.ic_rec, R.drawable.ic_rec_stop, mTempAudioPath);
             if (mMicToolBar == null) {
                 mTempAudioPath = null;
                 return;
@@ -676,6 +693,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
         }
     }
 
+
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if ((requestCode == REQUEST_AUDIO_PERMISSION) &&
@@ -687,6 +705,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
             initModel();
         }
     }
+
 
     private void showRescheduleCardDialog() {
         Consumer<Integer> runnable = days -> {
@@ -723,6 +742,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
         startActivityForResultWithAnimation(intent, ADD_NOTE, START);
     }
 
+
     @Override
     public boolean onMenuOpened(int featureId, Menu menu) {
         HandlerUtils.postOnNewHandler(() -> {
@@ -733,6 +753,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
         });
         return super.onMenuOpened(featureId, menu);
     }
+
 
     /**
      * This Method changes the color of icon if user taps in overflow button.
@@ -752,6 +773,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
         HandlerUtils.postDelayedOnNewHandler(this::refreshActionBar, 100);
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // NOTE: This is called every time a new question is shown via invalidate options menu
@@ -761,7 +783,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
         displayIcons(menu);
 
         mActionButtons.setCustomButtonsStatus(menu);
-        int alpha = (getControlBlocked() != ReviewerUi.ControlBlock.SLOW) ? Themes.ALPHA_ICON_ENABLED_LIGHT : Themes.ALPHA_ICON_DISABLED_LIGHT ;
+        int alpha = (getControlBlocked() != ReviewerUi.ControlBlock.SLOW) ? Themes.ALPHA_ICON_ENABLED_LIGHT : Themes.ALPHA_ICON_DISABLED_LIGHT;
         MenuItem markCardIcon = menu.findItem(R.id.action_mark_card);
         if (mCurrentCard != null && NoteService.isMarked(mCurrentCard.note())) {
             markCardIcon.setTitle(R.string.menu_unmark_note).setIcon(R.drawable.ic_star_white);
@@ -817,7 +839,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
             undoIconId = R.drawable.ic_undo_white;
             undoEnabled = (colIsOpen() && getCol().undoAvailable());
         }
-        int alpha_undo = (undoEnabled && getControlBlocked() != ReviewerUi.ControlBlock.SLOW) ? Themes.ALPHA_ICON_ENABLED_LIGHT : Themes.ALPHA_ICON_DISABLED_LIGHT ;
+        int alpha_undo = (undoEnabled && getControlBlocked() != ReviewerUi.ControlBlock.SLOW) ? Themes.ALPHA_ICON_ENABLED_LIGHT : Themes.ALPHA_ICON_DISABLED_LIGHT;
         MenuItem undoIcon = menu.findItem(R.id.action_undo);
         undoIcon.setIcon(undoIconId);
         undoIcon.setEnabled(undoEnabled).getIcon().mutate().setAlpha(alpha_undo);
@@ -902,7 +924,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
             bury_icon.setIcon(R.drawable.ic_flip_to_back_white);
             bury_icon.setTitle(R.string.menu_bury_card);
         }
-        alpha = (getControlBlocked() != ReviewerUi.ControlBlock.SLOW) ? Themes.ALPHA_ICON_ENABLED_LIGHT : Themes.ALPHA_ICON_DISABLED_LIGHT ;
+        alpha = (getControlBlocked() != ReviewerUi.ControlBlock.SLOW) ? Themes.ALPHA_ICON_ENABLED_LIGHT : Themes.ALPHA_ICON_DISABLED_LIGHT;
         bury_icon.getIcon().mutate().setAlpha(alpha);
         suspend_icon.getIcon().mutate().setAlpha(alpha);
 
@@ -919,7 +941,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
                 MenuBuilder m = (MenuBuilder) menu;
                 m.setOptionalIconsVisible(true);
             }
-        }catch (Exception | Error e) {
+        } catch (Exception | Error e) {
             Timber.w(e, "Failed to display icons in Over flow menu");
         }
     }
@@ -965,6 +987,8 @@ public class Reviewer extends AbstractFlashcardViewer implements
                 || itemId == R.id.action_flag_two
                 || itemId == R.id.action_flag_one;
     }
+
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (answerFieldIsFocused()) {
@@ -1000,6 +1024,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
         view.requestFocus();
         return true;
     }
+
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
@@ -1105,6 +1130,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
         }
     }
 
+
     public int getButtonCount() {
         return mSched.answerButtons(mCurrentCard);
     }
@@ -1130,14 +1156,18 @@ public class Reviewer extends AbstractFlashcardViewer implements
         return preferences;
     }
 
+
     @Override
     protected void updateActionBar() {
         super.updateActionBar();
         updateScreenCounts();
     }
 
+
     protected void updateScreenCounts() {
-        if (mCurrentCard == null) return;
+        if (mCurrentCard == null) {
+            return;
+        }
         super.updateActionBar();
         ActionBar actionBar = getSupportActionBar();
         Counts counts = mSched.counts(mCurrentCard);
@@ -1177,6 +1207,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
         mTextBarReview.setText(mRevCount);
     }
 
+
     @Override
     public void fillFlashcard() {
         super.fillFlashcard();
@@ -1196,11 +1227,13 @@ public class Reviewer extends AbstractFlashcardViewer implements
         super.displayCardQuestion();
     }
 
+
     @Override
     protected void displayCardAnswer() {
         delayedHide(100);
         super.displayCardAnswer();
     }
+
 
     @Override
     protected void initLayout() {
@@ -1222,6 +1255,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
         mCardMarker = new CardMarker(mark, flag);
     }
 
+
     @Override
     protected void switchTopBarVisibility(int visible) {
         super.switchTopBarVisibility(visible);
@@ -1232,6 +1266,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
             mTextBarReview.setVisibility(visible);
         }
     }
+
 
     @Override
     protected void onStop() {
@@ -1313,10 +1348,12 @@ public class Reviewer extends AbstractFlashcardViewer implements
         }
     }
 
+
     protected void restoreCollectionPreferences(Collection col) {
         super.restoreCollectionPreferences(col);
         mShowRemainingCardCount = col.get_config_boolean("dueCounts");
     }
+
 
     @Override
     protected boolean onSingleTap() {
@@ -1326,6 +1363,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
         }
         return false;
     }
+
 
     @Override
     protected void onFling() {
@@ -1348,6 +1386,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
         }
     }
 
+
     protected final Handler mFullScreenHandler = new Handler(HandlerUtils.getDefaultLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -1357,7 +1396,10 @@ public class Reviewer extends AbstractFlashcardViewer implements
         }
     };
 
-    /** Hide the navigation if in full-screen mode after a given period of time */
+
+    /**
+     * Hide the navigation if in full-screen mode after a given period of time
+     */
     protected void delayedHide(int delayMillis) {
         Timber.d("Fullscreen delayed hide in %dms", delayMillis);
         mFullScreenHandler.removeMessages(0);
@@ -1372,6 +1414,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
             createWhiteboard();
         }
     }
+
 
     @SuppressWarnings("deprecation") // #9332: UI Visibility -> Insets
     private void setFullScreen(final AbstractFlashcardViewer a) {
@@ -1418,6 +1461,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
                 });
     }
 
+
     private static final int ANIMATION_DURATION = 200;
     private static final float TRANSPARENCY = 0.90f;
 
@@ -1427,6 +1471,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
         view.setVisibility(View.VISIBLE);
         view.animate().alpha(TRANSPARENCY).setDuration(ANIMATION_DURATION).setListener(null);
     }
+
 
     private void hideViewWithAnimation(final View view) {
         view.animate()
@@ -1440,10 +1485,12 @@ public class Reviewer extends AbstractFlashcardViewer implements
                 });
     }
 
+
     @SuppressWarnings("deprecation") // #9332: UI Visibility -> Insets
     private boolean isImmersiveSystemUiVisible(AnkiActivity activity) {
         return (activity.getWindow().getDecorView().getSystemUiVisibility() & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == 0;
     }
+
 
     private void createWhiteboard() {
         SharedPreferences sharedPrefs = AnkiDroidApp.getSharedPrefs(this);
@@ -1469,6 +1516,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
             return mWhiteboard.handleTouchEvent(event);
         });
     }
+
 
     // Show or hide the whiteboard
     private void setWhiteboardVisibility(boolean state) {
@@ -1514,6 +1562,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
 
     /**
      * Whether or not dismiss note is available for current card and specified DismissType
+     *
      * @return true if there is another card of same note that could be dismissed
      */
     private boolean suspendNoteAvailable() {
@@ -1524,6 +1573,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
         return getCol().getDb().queryScalar("select 1 from cards where nid = ? and id != ? and queue != " + Consts.QUEUE_TYPE_SUSPENDED + " limit 1",
                 mCurrentCard.getNid(), mCurrentCard.getId()) == 1;
     }
+
 
     private boolean buryNoteAvailable() {
         if (mCurrentCard == null || isControlBlocked()) {
@@ -1541,10 +1591,12 @@ public class Reviewer extends AbstractFlashcardViewer implements
         return mWhiteboard;
     }
 
+
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     public AudioView getAudioView() {
         return mMicToolBar;
     }
+
 
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     public boolean hasDrawerSwipeConflicts() {
@@ -1567,36 +1619,39 @@ public class Reviewer extends AbstractFlashcardViewer implements
             if (result.equals("replay")) {
                 Timber.d("correctly recognize replay");
                 playSounds(true);
-            } else if (result.equals("flip")){
+            } else if (result.equals("flip")) {
                 Timber.d("correctly recognize flip");
                 displayCardAnswer();
-            } else if (result.equals("again")){
+            } else if (result.equals("again")) {
                 answerCard(Consts.BUTTON_ONE);
-            } else if (result.equals(("hard"))){
+            } else if (result.equals(("hard"))) {
                 int buttonNumber = getCol().getSched().answerButtons(mCurrentCard);
                 if (buttonNumber == 4) {
                     answerCard(Consts.BUTTON_TWO);
                 }
-            } else if (result.equals("good")){
+            } else if (result.equals("good")) {
                 int buttonNumber = getCol().getSched().answerButtons(mCurrentCard);
-                if (buttonNumber == 2 || buttonNumber == 3){
+                if (buttonNumber == 2 || buttonNumber == 3) {
                     answerCard(Consts.BUTTON_TWO);
-                } else if (buttonNumber == 4){
+                } else if (buttonNumber == 4) {
                     answerCard(Consts.BUTTON_THREE);
                 }
-            } else if (result.equals("easy")){
+            } else if (result.equals("easy")) {
                 int buttonNumber = getCol().getSched().answerButtons(mCurrentCard);
                 if (buttonNumber == 3) {
                     answerCard(Consts.BUTTON_THREE);
                 } else if (buttonNumber == 4) {
                     answerCard(Consts.BUTTON_FOUR);
                 }
-            } else if (result.equals("and do")){
+            } else if (result.equals("and do")) {
                 if (mShowWhiteboard && mWhiteboard != null && !mWhiteboard.undoEmpty()) {
                     mWhiteboard.undo();
                 } else {
                     undo();
                 }
+            } else if (result.equals("suspend")) {
+                Timber.d("correctly recognize suspend");
+                suspendCard();
             }
         } catch (JSONException e) {
             Timber.e(e);
@@ -1624,6 +1679,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
 
     }
 
+
     private void initModel() {
         StorageService.unpack(this, "model-en-us", "model",
                 (model) -> {
@@ -1633,6 +1689,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
                 },
                 (exception) -> Timber.e("Failed to unpack the model%s", exception.getMessage()));
     }
+
 
     private void recognizeMicrophone() {
         if (mSpeechService != null) {
@@ -1650,6 +1707,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
         }
     }
 
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -1663,6 +1721,8 @@ public class Reviewer extends AbstractFlashcardViewer implements
             mSpeechStreamService.stop();
         }
     }
+
+
     /**
      * Inner class which implements the submenu for the Suspend button
      */
@@ -1670,6 +1730,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
         public SuspendProvider(Context context) {
             super(context);
         }
+
 
         @Override
         public View onCreateActionView() {
@@ -1688,6 +1749,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
             return suspendNoteAvailable();
         }
 
+
         @Override
         public void onPrepareSubMenu(SubMenu subMenu) {
             subMenu.clear();
@@ -1696,6 +1758,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
                 subMenu.getItem(i).setOnMenuItemClickListener(this);
             }
         }
+
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
@@ -1709,6 +1772,8 @@ public class Reviewer extends AbstractFlashcardViewer implements
         }
     }
 
+
+
     /**
      * Inner class which implements the submenu for the Bury button
      */
@@ -1716,6 +1781,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
         public BuryProvider(Context context) {
             super(context);
         }
+
 
         @Override
         public View onCreateActionView() {
@@ -1734,6 +1800,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
             return buryNoteAvailable();
         }
 
+
         @Override
         public void onPrepareSubMenu(SubMenu subMenu) {
             subMenu.clear();
@@ -1742,6 +1809,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
                 subMenu.getItem(i).setOnMenuItemClickListener(this);
             }
         }
+
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
@@ -1756,6 +1824,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
     }
 
 
+
     /**
      * Inner class which implements the submenu for the Schedule button
      */
@@ -1764,15 +1833,18 @@ public class Reviewer extends AbstractFlashcardViewer implements
             super(context);
         }
 
+
         @Override
         public View onCreateActionView() {
             return null;    // Just return null for a simple dropdown menu
         }
 
+
         @Override
         public boolean hasSubMenu() {
             return true;
         }
+
 
         @Override
         public void onPrepareSubMenu(SubMenu subMenu) {
@@ -1782,6 +1854,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
                 subMenu.getItem(i).setOnMenuItemClickListener(this);
             }
         }
+
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
@@ -1803,20 +1876,27 @@ public class Reviewer extends AbstractFlashcardViewer implements
         }
     }
 
+
+
     private interface SubMenuProvider extends MenuItem.OnMenuItemClickListener {
-        @MenuRes int getSubMenu();
+        @MenuRes
+        int getSubMenu();
+
         boolean hasSubMenu();
     }
+
 
     @Override
     public AnkiDroidJsAPI javaScriptFunction() {
         return new ReviewerJavaScriptFunction(this);
     }
 
+
     public class ReviewerJavaScriptFunction extends AnkiDroidJsAPI {
         public ReviewerJavaScriptFunction(@NonNull AbstractFlashcardViewer activity) {
             super(activity);
         }
+
 
         @JavascriptInterface
         @Override
@@ -1824,11 +1904,13 @@ public class Reviewer extends AbstractFlashcardViewer implements
             return mNewCount.toString();
         }
 
+
         @JavascriptInterface
         @Override
         public String ankiGetLrnCardCount() {
             return mLrnCount.toString();
         }
+
 
         @JavascriptInterface
         @Override
@@ -1836,11 +1918,13 @@ public class Reviewer extends AbstractFlashcardViewer implements
             return mRevCount.toString();
         }
 
+
         @JavascriptInterface
         @Override
         public int ankiGetETA() {
             return mEta;
         }
+
 
         @JavascriptInterface
         @Override
@@ -1848,17 +1932,20 @@ public class Reviewer extends AbstractFlashcardViewer implements
             return mEaseButton1.getNextTime();
         }
 
+
         @JavascriptInterface
         @Override
         public String ankiGetNextTime2() {
             return mEaseButton2.getNextTime();
         }
 
+
         @JavascriptInterface
         @Override
         public String ankiGetNextTime3() {
             return mEaseButton3.getNextTime();
         }
+
 
         @JavascriptInterface
         @Override

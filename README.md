@@ -11,7 +11,7 @@ Please use Android studio bumblebee to build the project. Also consider to build
 - [x] say "flip" to show the answer of the flashcard
 - [x] say "again", "hard", "good" or "easy" to finish the current card and moves to the next card
 - [x] say "undo" to undo the last card you have studied
-- [ ] say "suspend" to suspend the current card
+- [x] say "suspend" to suspend the current card
 
 ## Reference
 https://github.com/ankidroid/Anki-Android
