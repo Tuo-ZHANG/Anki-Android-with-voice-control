@@ -750,6 +750,9 @@ public class DeckPicker extends NavigationDrawerActivity implements
             Timber.i("DeckPicker:: Undo button pressed");
             undo();
             return true;
+        } else if (itemId == R.id.nav_browser) {
+            Timber.i("Navigating to card browser");
+            openCardBrowser();
         } else if (itemId == R.id.action_sync) {
             Timber.i("DeckPicker:: Sync button pressed");
             sync();

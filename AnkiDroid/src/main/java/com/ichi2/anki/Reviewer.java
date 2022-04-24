@@ -1616,7 +1616,7 @@ public class Reviewer extends AbstractFlashcardViewer implements
             JSONObject object = new JSONObject(hypothesis);
             String result = (String) object.get("text");
             Timber.d(result);
-            if (result.equals("replay")) {
+            if (result.equals("replay") || result.equals("media")) {
                 Timber.d("correctly recognize replay");
                 playSounds(true);
             } else if (result.equals("flip")) {

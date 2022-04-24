@@ -785,13 +785,14 @@ public class CardBrowser extends NavigationDrawerActivity implements
         mDeckSpinnerSelection = new DeckSpinnerSelection(this, col, this.findViewById(R.id.toolbar_spinner), true, false);
         mDeckSpinnerSelection.initializeActionBarDeckSpinner(this.getSupportActionBar());
 
-        Intent intent = getIntent();
-        Compat compat = CompatHelper.getCompat();
-        if (compat.ACTION_PROCESS_TEXT.equals(intent.getAction())) {
-            selectDeckAndSave(0);
-        } else {
-            selectDeckAndSave(deckId);
-        }
+//        Intent intent = getIntent();
+//        Compat compat = CompatHelper.getCompat();
+//        if (compat.ACTION_PROCESS_TEXT.equals(intent.getAction())) {
+//            selectDeckAndSave(0);
+//        } else {
+//            selectDeckAndSave(deckId);
+//        }
+        selectDeckAndSave(0);
 
         // If a valid value for last deck exists then use it, otherwise use libanki selected deck
         if (getLastDeckId() != null && getLastDeckId() == ALL_DECKS_ID) {
